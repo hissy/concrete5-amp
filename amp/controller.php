@@ -4,9 +4,7 @@ namespace Concrete\Package\Amp;
 use PageTheme;
 use Core;
 use Events;
-use Request;
-use Page;
-use Concrete\Core\Url\Components\Path;
+use Sunra\PhpSimple\HtmlDomParser;
 
 class Controller extends \Concrete\Core\Package\Package
 {
@@ -34,28 +32,17 @@ class Controller extends \Concrete\Core\Package\Package
     public function on_start()
     {
         Core::bind('\PageController', 'Concrete\Package\Amp\Page\Controller\PageController');
-        /*
-        Events::addListener('on_before_dispatch', function() {
-            $request = Request::getInstance();
-            $page = Page::getByPath($request->getPath());
-            if ($page->isError()) {
-                $path = new Path($request->getPath());
-                if (count($path) > 0 && $path[0] == 'amp') {
-                    $path->remove('amp');
-                    $page = Page::getByPath($path->getUriComponent());
-                    //dd($page);
-                    if (!$page->isError) {
-                        $new_request = Request::createFromGlobals();
-                        $request->setCurrentPage($page);
-                        \Request::setInstance($prefixed_request);
-                        dd($request);
-                        $response = Core::dispatch($request);
-                        $response->send();
-                        Core::shutdown();
-                    }
-                }
+        
+        Events::addListener('on_page_output', function($event) {
+            $contents = $event->getArgument('contents');
+            
+            $dom = HtmlDomParser::str_get_html($contents);
+            
+            foreach ($dom->find('img') as $img) {
+                $img->outertext = sprintf('<amp-img src="%s" alt="%s" height="%s" width="%s" />', $img->src, $img->alt, $img->height, $img->width);
             }
+            
+            $event->setArgument('contents', (string) $dom);
         });
-        */
     }
 }
