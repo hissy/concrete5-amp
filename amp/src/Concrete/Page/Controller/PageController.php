@@ -2,6 +2,8 @@
 namespace Concrete\Package\Amp\Page\Controller;
 
 use Concrete\Core\Html\Object\HeadLink;
+use NotnilCreative\Amp\Converter as AmpConverter;
+use Events;
 
 class PageController extends \Concrete\Core\Page\Controller\PageController
 {
@@ -12,16 +14,12 @@ class PageController extends \Concrete\Core\Page\Controller\PageController
             $link = $c->getCollectionLink(true) . '/amp';
             $this->addHeaderItem(new HeadLink($link, 'amphtml'));
         }
-        //parent::view();
     }
     
     public function amp()
     {
         $this->setTheme('amp');
-        $c = $this->getPageObject();
-        if (!$c->isError()) {
-            $link = $c->getCollectionLink(true);
-            $this->addHeaderItem(new HeadLink($link, 'canonical'));
-        }
+        
+        //Events::addListener('on_page_output', array(new AmpConverter(), 'handle'));
     }
 }

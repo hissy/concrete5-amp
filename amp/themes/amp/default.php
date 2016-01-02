@@ -1,8 +1,16 @@
-<?php defined('C5_EXECUTE') or die("Access Denied."); ?>
+<?php
+/**
+ * Basic template for AMP html.
+ *
+ * How to debug
+ * * Add #development=1 to the URL
+ * * Open the Chrome DevTools console and check for validation errors.
+ */
+defined('C5_EXECUTE') or die("Access Denied."); ?>
 <!doctype html>
 <html ⚡ lang="<?=Localization::activeLanguage()?>">
 <head>
-    <?php Loader::element('header_required', array('pageTitle' => isset($pageTitle) ? $pageTitle : ''));?>
+    <?=View::element('header_required', array('pageTitle' => isset($pageTitle) ? $pageTitle : ''), 'amp')?>
     <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
     <style amp-custom>
     body {
@@ -33,7 +41,11 @@
                 <div class="article-body" itemprop="articleBody">
                     <?php
                     $a = new Area('Main');
-                    $a->display($c);
+                    $blocks = $a->getAreaBlocksArray($c);
+                    $converter = new \NotnilCreative\Amp\Converter();
+                    $blocks = $converter->getAmpSafeBlockArray($blocks);
+                    $a->setCustomTemplate('video', 'amp');
+                    $a->display($c, $blocks);
                     ?>
                 </div>
             </article>
@@ -42,6 +54,5 @@
             <div class="brand-logo">PublisherLogo</div>
         </footer>
     </div>
-    <?php Loader::element('footer_required'); ?>
 </body>
 </html>
