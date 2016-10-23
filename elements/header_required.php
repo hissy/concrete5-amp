@@ -1,6 +1,7 @@
 <?php
 defined('C5_EXECUTE') or die("Access Denied.");
 
+/** @var \Concrete\Core\Page\Page $c */
 $c = Page::getCurrentPage();
 if (is_object($c)) {
     $cp = new Permissions($c);
@@ -46,6 +47,13 @@ if (is_object($c)) {
 
     $cID = $c->getCollectionID();
 
+    if (!isset($image)) {
+        $thumbnail = $c->getAttribute('thumbnail');
+        if ($thumbnail instanceof File && !$thumbnail->isError()) {
+            $image = $thumbnail->getURL();
+        }
+    }
+
 } else {
     $cID = 1;
     if (!isset($pageTitle)) {
@@ -55,22 +63,36 @@ if (is_object($c)) {
 ?>
 <meta charset="utf-8">
 <title><?=h($pageTitle)?></title>
-<meta name="description" content="<?=h($pageDescription)?>" />
 <?php
-$akk = $c->getCollectionAttributeValue('meta_keywords');
-if ($akk) { ?>
-<meta name="keywords" content="<?=h($akk)?>" />
-<?php }
-
-if($c->getCollectionAttributeValue('exclude_search_index')) {
-    echo '<meta name="robots" content="noindex" />';
-}
-
-if (Config::get('concrete.misc.app_version_display_in_header')) {
-    echo '<meta name="generator" content="concrete5 - ' . APP_VERSION . '" />';
-} else {
-    echo '<meta name="generator" content="concrete5" />';
-}
-
 $canonical_link = $c->getCollectionLink(true);
 echo new \Concrete\Core\Html\Object\HeadLink($canonical_link, 'canonical');
+?>
+<meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+<script type="application/ld+json">
+<?php
+    /** @var \Concrete\Core\Localization\Service\Date $date */
+    $date = Core::make('helper/date');
+
+    $jsonLD = array(
+        "@context" => "http://schema.org",
+        "@type" => "NewsArticle",
+        "mainEntityOfPage" => $canonical_link,
+        "headline" => $pageDescription,
+        "datePublished" => $date->formatCustom('c', $c->getCollectionDatePublic()),
+        "dateModified" => $date->formatCustom('c', $c->getCollectionDateLastModified()),
+    );
+
+    if (isset($image)) {
+        $jsonLD['image'] = array($image);
+    }
+
+    if (is_array($headers)) {
+        $jsonLD = $headers + $jsonLD;
+    }
+    echo json_encode($jsonLD);
+?>
+</script>
+<style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+<?php
+$v = View::getInstance();
+$v->markHeaderAssetPosition();

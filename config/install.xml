@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<concrete5-cif version="1.0">
+    <themes>
+        <theme handle="amp" package="amp"/>
+    </themes>
+    <singlepages>
+        <page name="AMP"
+              path="/dashboard/system/seo/amp"
+              filename="/dashboard/system/seo/amp.php"
+              pagetype=""
+              description=""
+              package="amp">
+            <attributes>
+                <attributekey handle="meta_keywords">
+                    <value>Accelerated Mobile Pages, AMP, Analytics</value>
+                </attributekey>
+            </attributes>
+        </page>
+    </singlepages>
+</concrete5-cif>
