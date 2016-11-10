@@ -7,7 +7,7 @@ Accelerated Mobile Pages (AMP) for concrete5 site
 ## Install
 
 ```bash
-$ cd ./package
+$ cd ./packages
 $ git clone git@github.com:hissy/concrete5-amp.git amp
 $ cd ../
 $ ./concrete/bin/concrete5 c5:package-install amp
