@@ -49,8 +49,10 @@ if (is_object($c)) {
     $date = Core::make('helper/date');
     /** @var \Concrete\Core\Utility\Service\Text $text */
     $text = Core::make('helper/text');
-    /** @var \Concrete\Core\Foundation\Environment $environment */
-    $environment = \Concrete\Core\Foundation\Environment::get();
+    /** @var \Concrete\Core\Page\Theme\Theme $theme */
+    $theme = \Concrete\Core\Page\Theme\Theme::getByHandle('amp');
+    $theme_url = Core::getApplicationURL() . $theme->getThemeURL();
+    $theme_path = DIR_BASE . $theme->getThemeURL();
 
     // We can set a headline 3 ways:
     // 1. It comes through programmatically as $pageDescription.
@@ -84,7 +86,7 @@ if (is_object($c)) {
             'name' => Config::get('concrete.site'), // @TODO: Compatible up to ver8 SiteKey system
             'logo' => array(
                 '@type' => 'ImageObject',
-                'url' => Core::getApplicationURL() . $environment->getURL(DIRNAME_IMAGES . '/publisher.png', 'amp'),
+                'url' => $theme_url . '/images/publisher.png',
                 'width' => 600,
                 'height' => 60,
             ),
@@ -114,10 +116,10 @@ if (is_object($c)) {
         }
     }
     if (!isset($image)) {
-        $size = getimagesize($environment->getPath(DIRNAME_IMAGES . '/thumbnail.png', 'amp'));
+        $size = getimagesize($theme_path . '/images/thumbnail.png');
         $image = array(
             '@type' => 'ImageObject',
-            'url' => Core::getApplicationURL() . $environment->getURL(DIRNAME_IMAGES . '/thumbnail.png', 'amp'),
+            'url' => $theme_url . '/images/thumbnail.png',
             'width' => $size[0],
             'height' => $size[1],
         );
