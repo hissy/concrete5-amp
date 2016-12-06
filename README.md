@@ -2,7 +2,7 @@
 
 Accelerated Mobile Pages (AMP) for concrete5 site
 
-**This package is still beta. Please use at your own risk.**
+**This package is still under beta. Please use at your own risk.**
 
 ## Install
 
@@ -20,9 +20,21 @@ $ ./concrete/bin/concrete5 c5:package-install amp
 3. Input Google Analytics Property ID (Optional)
 4. Save
 
+## How to replace publisher logo and default thumbnail image
+
+* Put publisher.png and thumbnail.png into `application/images/` directory.
+* publisher.png must be 600px width and 60px height.
+* thumbnail.png should be 1280px width and 720px height.
+
+## How to customise design template
+
+* Copy `packages/themes/amp` directory and files to `application/themes/amp`
+
 ## References
 
-* https://www.ampproject.org/
+* [AMP Official Site](https://www.ampproject.org/)
+* [Structured Data Testing Tool](https://search.google.com/structured-data/testing-tool/)
+* [AMP Testing Tool](https://search.google.com/search-console/amp)
 
 ## License
 
