@@ -11,8 +11,14 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
 <html ⚡ lang="<?=Localization::activeLanguage()?>">
 <head>
     <?php
+    /**
+     * You can override some properties of structured data.
+     * NOTICE: 'author' and 'publisher' are required properties and should be overridden.
+     * NOTICE: You must follow the AMP logo guideline.
+     * @see https://developers.google.com/search/docs/data-types/articles
+     */
     /*
-    $headers = array(
+    $headers[] = array(
         'author' => array(
             '@type' => 'Person',
             'name' => 'John Doe',
@@ -29,7 +35,13 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
         ),
     );
     */
-    View::element('header_required', array('headers' => $headers), 'amp');
+    $thumbnail = $c->getAttribute('thumbnail');
+    View::element('header_required', array(
+        'headers'         => isset($headers) ? $headers : array(),
+        'pageTitle'       => isset($pageTitle) ? $pageTitle : '',
+        'pageDescription' => isset($pageDescription) ? $pageDescription : '',
+        'thumbnail'       => $thumbnail,
+    ), 'amp');
     ?>
     <script async custom-element="amp-social-share" src="https://cdn.ampproject.org/v0/amp-social-share-0.1.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
@@ -46,7 +58,6 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
         }
         amp-img {
             background-color: grey;
-            border: 1px solid black;
         }
         .brand-logo {
             font-weight: bold;
@@ -54,6 +65,10 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
         .header-time {
             font-size: small;
             color: grey;
+        }
+        .feature-image {
+            margin: 20px 0;
+            text-align: center;
         }
         .copyright {
             color: lightgrey;
@@ -71,17 +86,26 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
     <div class="<?php echo $c->getPageWrapperClass(); ?>">
         <header>
             <div class="brand-logo">
-                <?php echo Config::get('concrete.site'); ?>
+                <?php echo h(Config::get('concrete.site')); ?>
             </div>
         </header>
         <main role="main">
             <article>
                 <header>
+                <?php if ($thumbnail instanceof File && !$thumbnail->isError()) { ?>
+                    <figure class="feature-image">
+                        <amp-img
+                                src="<?=$thumbnail->getURL()?>"
+                                width="<?=$thumbnail->getAttribute('width')?>"
+                                height="<?=$thumbnail->getAttribute('height')?>"
+                                layout="responsive"></amp-img>
+                    </figure>
+                <?php } ?>
                     <h1 itemprop="headline"><?php echo h($c->getCollectionName()); ?></h1>
-                        <time class="header-time"
-                              itemprop="datePublished"
-                              datetime="<?php echo $c->getCollectionDatePublicObject()->format(DATE_ATOM); ?>"><?php
-                            echo Core::make('helper/date')->formatDate($c->getCollectionDatePublic(), true); ?></time>
+                    <time class="header-time"
+                          itemprop="datePublished"
+                          datetime="<?php echo $c->getCollectionDatePublicObject()->format(DATE_ATOM); ?>"><?php
+                        echo Core::make('helper/date')->formatDate($c->getCollectionDatePublic(), true); ?></time>
                 </header>
                 <div class="article-body" itemprop="articleBody">
                     <?php
@@ -93,7 +117,7 @@ defined('C5_EXECUTE') or die("Access Denied."); ?>
         </main>
         <footer>
             <div class="copyright">
-                <small>&copy; <?php echo Config::get('concrete.site'); ?></small>
+                <small>&copy; <?php echo h(Config::get('concrete.site')); ?></small>
             </div>
             <div class="social-share">
                 <amp-social-share type="twitter"></amp-social-share>
