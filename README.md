@@ -20,12 +20,6 @@ $ ./concrete/bin/concrete5 c5:package-install amp
 3. Input Google Analytics Property ID (Optional)
 4. Save
 
-## How to replace publisher logo and default thumbnail image
-
-* Put publisher.png and thumbnail.png into `application/images/` directory.
-* publisher.png must be 600px width and 60px height.
-* thumbnail.png should be 1280px width and 720px height.
-
 ## How to customise design template
 
 * Copy `packages/themes/amp` directory and files to `application/themes/amp`
